@@ -9,12 +9,16 @@ import { motion, AnimatePresence } from "framer-motion";
 interface AppLayoutProps {
   onLocationSelect: (loc: LocationInfo) => void;
   locationName: string;
+  condition?: string;
+  isDay?: boolean;
   children: React.ReactNode;
 }
 
 export function AppLayout({
   onLocationSelect,
   locationName,
+  condition,
+  isDay = true,
   children,
 }: AppLayoutProps) {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -60,7 +64,11 @@ export function AppLayout({
       <header className="relative z-50 backdrop-blur-xl bg-black/20 border-b border-white/5">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Cloud size={18} className="text-sky-400" />
+            {condition ? (
+              <img src={`/icons/${condition}-${isDay ? 'day' : 'night'}.svg`} alt="WeatherLens" className="w-6 h-6 object-contain drop-shadow-lg" />
+            ) : (
+              <Cloud size={18} className="text-sky-400" />
+            )}
             <h1 className="text-sm font-semibold text-white/90 tracking-tight">
               WeatherLens
             </h1>

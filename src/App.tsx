@@ -13,10 +13,21 @@ import { ClimateTimeMachine } from "@/components/analytics/ClimateTimeMachine";
 import { AstrophysicsDashboard } from "@/components/analytics/AstrophysicsDashboard";
 import { motion } from "framer-motion";
 import { Cloud, Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 function App() {
   const { consensus, location, radar, loading, error, refresh, setLocation } =
     useWeatherData();
+
+  useEffect(() => {
+    if (consensus) {
+      const timeOfDay = consensus.current.isDay ? 'day' : 'night';
+      const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+      if (link) {
+        link.href = `/icons/${consensus.current.condition}-${timeOfDay}.svg`;
+      }
+    }
+  }, [consensus?.current.condition, consensus?.current.isDay]);
 
   // Loading screen
   if (loading && !consensus) {
@@ -68,6 +79,8 @@ function App() {
       <AppLayout
         onLocationSelect={setLocation}
         locationName={location?.name || "Loading..."}
+        condition={consensus.current.condition}
+        isDay={consensus.current.isDay}
       >
         <motion.div
           initial={{ opacity: 0 }}
