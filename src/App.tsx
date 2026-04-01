@@ -9,6 +9,8 @@ import { WeatherDetailsGrid } from "@/components/weather/WeatherDetails";
 import { SourceComparison } from "@/components/comparison/SourceComparison";
 import { AnalyticsDashboard } from "@/components/analytics/AnalyticsDashboard";
 import { RadarMap } from "@/components/map/RadarMap";
+import { ClimateTimeMachine } from "@/components/analytics/ClimateTimeMachine";
+import { AstrophysicsDashboard } from "@/components/analytics/AstrophysicsDashboard";
 import { motion } from "framer-motion";
 import { Cloud, Loader2 } from "lucide-react";
 
@@ -109,6 +111,16 @@ function App() {
             <div className="mt-8 px-4">
               <h2 className="text-xl font-light text-white/90 mb-4 px-1">Weather Intelligence</h2>
               <AnalyticsDashboard consensus={consensus} />
+              
+              {consensus.astronomy && (
+                <div className="mt-4">
+                  <AstrophysicsDashboard consensus={consensus} />
+                </div>
+              )}
+
+              <div className="mt-4">
+                <ClimateTimeMachine consensus={consensus} />
+              </div>
             </div>
 
             <div className="mt-8 mb-8">

@@ -16,17 +16,15 @@ interface RadarMapProps {
 export function RadarMap({ coordinates, radar }: RadarMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
-  const radarLayerRef = useRef<L.TileLayer | null>(null);
+  const layersRef = useRef<L.TileLayer[]>([]);
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [mapReady, setMapReady] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const allFrames = radar
-    ? [...radar.past, ...radar.nowcast]
-    : [];
+  const allFrames = radar ? [...radar.past, ...radar.nowcast] : [];
 
-  // Initialize map
+  // Initialize map and preload all tiles
   useEffect(() => {
     let isMounted = true;
 
@@ -34,12 +32,11 @@ export function RadarMap({ coordinates, radar }: RadarMapProps) {
       if (!mapContainerRef.current || mapRef.current) return;
 
       const L = await import("leaflet");
-
       if (!isMounted || !mapContainerRef.current) return;
 
       const map = L.map(mapContainerRef.current, {
         center: [coordinates.latitude, coordinates.longitude],
-        zoom: 7,
+        zoom: 6,
         zoomControl: false,
         attributionControl: false,
       });
@@ -53,7 +50,6 @@ export function RadarMap({ coordinates, radar }: RadarMapProps) {
         }
       ).addTo(map);
 
-      // Add zoom control to top-right
       L.control.zoom({ position: "topright" }).addTo(map);
 
       // Location marker
@@ -69,6 +65,24 @@ export function RadarMap({ coordinates, radar }: RadarMapProps) {
       }).addTo(map);
 
       mapRef.current = map;
+
+      // Preload all radar frames natively into the DOM so they cache and animate smoothly
+      if (radar && allFrames.length > 0) {
+        layersRef.current = allFrames.map((frame, idx) => {
+          // Color scheme '2' (standard radar), smooth '1', snow '1'
+          const tileUrl = `${radar.host}${frame.path}/256/{z}/{x}/{y}/2/1_1.png`;
+          const layer = L.tileLayer(tileUrl, {
+            opacity: idx === allFrames.length - 1 ? 0.65 : 0, 
+            maxZoom: 19,
+            zIndex: 10 + idx,
+          });
+          layer.addTo(map);
+          return layer;
+        });
+
+        setCurrentFrame(allFrames.length - 1);
+      }
+
       setMapReady(true);
     }
 
@@ -79,42 +93,27 @@ export function RadarMap({ coordinates, radar }: RadarMapProps) {
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
+        layersRef.current = [];
       }
     };
-  }, [coordinates.latitude, coordinates.longitude]);
+  }, [coordinates.latitude, coordinates.longitude, radar]); // Re-init purely if location or radar host changes
 
-  // Update radar layer
+  // Update radar playback frame smoothly by toggling DOM opacity
   const updateRadarFrame = useCallback(
     (frameIndex: number) => {
-      if (!mapRef.current || !radar || allFrames.length === 0) return;
+      if (!mapRef.current || layersRef.current.length === 0) return;
 
-      const frame = allFrames[frameIndex];
-      if (!frame) return;
-
-      import("leaflet").then((L) => {
-        if (radarLayerRef.current) {
-          mapRef.current!.removeLayer(radarLayerRef.current);
-        }
-
-        const tileUrl = `${radar.host}${frame.path}/256/{z}/{x}/{y}/2/1_1.png`;
-
-        radarLayerRef.current = L.tileLayer(tileUrl, {
-          opacity: 0.65,
-          maxZoom: 19,
-        }).addTo(mapRef.current!);
+      layersRef.current.forEach((layer, idx) => {
+        layer.setOpacity(idx === frameIndex ? 0.65 : 0);
       });
     },
-    [radar, allFrames]
+    []
   );
 
-  // Show initial frame when ready
+  // Synchronize external frame jumps
   useEffect(() => {
-    if (mapReady && allFrames.length > 0) {
-      const lastIdx = allFrames.length - 1;
-      setCurrentFrame(lastIdx);
-      updateRadarFrame(lastIdx);
-    }
-  }, [mapReady, allFrames.length, updateRadarFrame]);
+    updateRadarFrame(currentFrame);
+  }, [currentFrame, updateRadarFrame]);
 
   // Playback logic
   useEffect(() => {

@@ -473,12 +473,23 @@ export async function fetchWttrIn(
       }
     );
 
+    const astro = d.weather?.[0]?.astronomy?.[0];
+    const astronomy = astro ? {
+      sunrise: astro.sunrise,
+      sunset: astro.sunset,
+      moonrise: astro.moonrise,
+      moonset: astro.moonset,
+      moonPhase: astro.moon_phase,
+      moonIllumination: parseInt(astro.moon_illumination) || 0,
+    } : undefined;
+
     const result: WeatherSourceData = {
       source: "wttr",
       fetchedAt: Date.now(),
       current,
       hourly,
       daily,
+      astronomy,
     };
 
     setCache(key, result);

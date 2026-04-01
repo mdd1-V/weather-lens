@@ -180,23 +180,7 @@ export function WeatherDetailsGrid({ consensus }: WeatherDetailsProps) {
     },
   ];
 
-  // Add sunrise/sunset if available
-  if (a) {
-    cards.push({
-      icon: <Sunrise size={16} />,
-      label: "Sunrise",
-      value: a.sunrise,
-      subtitle: `Sunset at ${a.sunset}`,
-      delay: 1.1,
-    });
-    cards.push({
-      icon: <Sunset size={16} />,
-      label: "Moon Phase",
-      value: a.moonPhase,
-      subtitle: `${a.moonIllumination}% illumination`,
-      delay: 1.15,
-    });
-  }
+
 
   return (
     <div className="relative z-10 mx-4 mt-3">
