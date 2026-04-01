@@ -17,10 +17,12 @@ If one weather model predicts rain but the others predict sunshine, WeatherLens 
 
 *   **8-Source Aggregation**: Pulls parallel data from Open-Meteo, Tomorrow.io, Pirate Weather, ECMWF (MET Norway), OpenWeatherMap, Visual Crossing, WeatherAPI, and wttr.in.
 *   **Median-Based Outlier Detection**: Dynamically calculates standard deviations across all APIs to filter out bizarre or broken data spikes.
-*   **Hyper-Local Nowcasting**: Analyzes 1-minute and 15-minute precipitation arrays to accurately predict exactly when rain will start and stop over the next 60 minutes.
-*   **Breathing Analytics**: Aggregates comprehensive European and US Air Quality Indices (PM2.5, PM10, O3) and detailed Pollen grids (Tree, Grass, Weed).
+*   **Interactive Live Radar Engine**: A high-performance, pre-loading radar playback map powered by RainViewer, tracking storm cells globally with Netflix-style smooth interpolation.
+*   **Climate Time Machine**: Delves into Open-Meteo's Archive API to directly compare today's live temperature with precise historical data from exactly 1, 5, and 10 years ago.
+*   **Astrophysics Dashboard**: Tracks real-time lunar phases, precise sunrise/sunset timing, and celestial illumination via the wttr.in API.
+*   **Dynamic Day/Night 3D Iconography**: The app logo and browser favicon physically morph in real-time between 28 dynamically generated, geometric 3D SVG states matching the live cloud cover, precipitation, and day/night cycle.
 *   **Address-Level Precision**: Utilizes OpenStreetMap Nominatim, allowing you to search specific street addresses, zip codes, or landmarks.
-*   **Immersive Glassmorphic UI**: Powered by Tailwind CSS v4 and Framer Motion, featuring dynamic backgrounds that react to the current weather condition.
+*   **Immersive Glassmorphic UI**: Powered by Tailwind CSS v4 and Framer Motion, featuring dynamic backgrounds that react to the current weather condition within a highly responsive intelligence grid.
 
 <br>
 
