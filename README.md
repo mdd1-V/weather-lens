@@ -39,7 +39,7 @@ If one weather model predicts rain but the others predict sunshine, WeatherLens 
 
 ## 🚀 Getting Started
 
-WeatherLens is built around "graceful degradation." It will work beautifully **out-of-the-box using the 100% free APIs** (Open-Meteo, wttr.in, MET Norway). 
+WeatherLens is built around "graceful degradation." It will work beautifully **out-of-the-box using the 100% free APIs** (Open-Meteo, wttr.in, MET Norway).
 
 To unlock the massive hyper-local and nowcasting engine, you can sign up for the free developer tiers of the remaining premium platforms and inject them into your environment.
 

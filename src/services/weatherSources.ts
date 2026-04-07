@@ -196,7 +196,7 @@ export async function fetchOpenMeteo(
 
   let airQuality: AirQuality | undefined = undefined;
   let pollen: import("@/types/weather").Pollen | undefined = undefined;
-  
+
   if (aqData?.current) {
     const c = aqData.current;
     airQuality = {
@@ -519,7 +519,7 @@ export async function fetchMetNorway(
     );
     if (!res.ok) return null;
     const d = await res.json();
-    
+
     const ts = d.properties.timeseries;
     if (!ts || ts.length === 0) return null;
 
