@@ -3,6 +3,9 @@
   <h1>WeatherLens</h1>
   <p><strong>The Ultimate Multi-Source Weather Consensus Engine</strong></p>
   <p>
+    🌐 <a href="https://weatherlens.space">weatherlens.space</a>
+  </p>
+  <p>
     React 19 • Vite 6 • Tailwind CSS v4 • Framer Motion
   </p>
 </div>
