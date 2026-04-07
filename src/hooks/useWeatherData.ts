@@ -56,6 +56,7 @@ export function useWeatherData(): UseWeatherDataReturn {
             europeanAqi: sensorAQ.europeanAqi,
             // Keep usAqi from API source if available, otherwise calculate from sensor PM2.5
             usAqi: result.airQuality.usAqi || sensorAQ.usAqi,
+            source: result.airQuality.source ? `${result.airQuality.source} & Sensor.Community` : "Sensor.Community",
           };
         } else {
           result.airQuality = sensorAQ;

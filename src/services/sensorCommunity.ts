@@ -239,5 +239,6 @@ export function sensorCommunityToAirQuality(data: SensorCommunityAQ): AirQuality
     co: 0,   // Not measured by citizen sensors
     usAqi: calculateUsAqi(data.pm25),
     europeanAqi: data.europeanAqi,
+    source: "Sensor.Community",
   };
 }

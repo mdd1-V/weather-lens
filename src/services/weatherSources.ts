@@ -208,6 +208,7 @@ export async function fetchOpenMeteo(
       co: c.carbon_monoxide,
       usAqi: c.us_aqi,
       europeanAqi: c.european_aqi,
+      source: "Open-Meteo",
     };
     pollen = {
       tree: (c.alder_pollen || 0) + (c.birch_pollen || 0) + (c.olive_pollen || 0),
@@ -334,6 +335,7 @@ export async function fetchWeatherAPI(
           so2: aq.so2,
           co: aq.co,
           usAqi: aq["us-epa-index"],
+          source: "WeatherAPI",
         }
       : undefined;
 

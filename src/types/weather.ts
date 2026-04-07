@@ -92,6 +92,7 @@ export interface AirQuality {
   co: number;
   usAqi: number;             // US EPA index
   europeanAqi?: number;      // EU AQI
+  source?: string;           // e.g. "open-meteo" or "sensor.community"
 }
 
 export interface Pollen {
