@@ -22,11 +22,11 @@ function formatHour(timeStr: string): string {
 }
 
 function aqiLabel(aqi: number): { label: string; color: string } {
-  if (aqi <= 1) return { label: "Good", color: "text-emerald-400" };
-  if (aqi <= 2) return { label: "Moderate", color: "text-yellow-400" };
-  if (aqi <= 3) return { label: "Unhealthy (Sensitive)", color: "text-orange-400" };
-  if (aqi <= 4) return { label: "Unhealthy", color: "text-red-400" };
-  if (aqi <= 5) return { label: "Very Unhealthy", color: "text-purple-400" };
+  if (aqi <= 50) return { label: "Good", color: "text-emerald-400" };
+  if (aqi <= 100) return { label: "Moderate", color: "text-yellow-400" };
+  if (aqi <= 150) return { label: "Unhealthy (Sensitive)", color: "text-orange-400" };
+  if (aqi <= 200) return { label: "Unhealthy", color: "text-red-400" };
+  if (aqi <= 300) return { label: "Very Unhealthy", color: "text-purple-400" };
   return { label: "Hazardous", color: "text-rose-500" };
 }
 

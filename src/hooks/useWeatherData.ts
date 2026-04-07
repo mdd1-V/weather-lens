@@ -4,6 +4,7 @@ import { getCurrentPosition, reverseGeocode } from "@/services/geolocation";
 import { fetchAllSources } from "@/services/weatherSources";
 import { analyzeConsensus } from "@/services/consensusEngine";
 import { clearCache } from "@/services/cache";
+import { fetchSensorCommunityAQ, sensorCommunityToAirQuality } from "@/services/sensorCommunity";
 
 interface UseWeatherDataReturn {
   consensus: ConsensusResult | null;
@@ -29,10 +30,11 @@ export function useWeatherData(): UseWeatherDataReturn {
     try {
       const { latitude, longitude } = loc.coordinates;
 
-      // Fetch weather data from all sources in parallel
-      const [sources, radarData] = await Promise.all([
+      // Fetch weather data, radar, and Sensor.Community AQ in parallel
+      const [sources, radarData, sensorCommunityAQ] = await Promise.all([
         fetchAllSources(latitude, longitude),
         fetchRadarData(),
+        fetchSensorCommunityAQ(latitude, longitude).catch(() => null),
       ]);
 
       if (sources.length === 0) {
@@ -40,6 +42,26 @@ export function useWeatherData(): UseWeatherDataReturn {
       }
 
       const result = analyzeConsensus(sources, loc);
+
+      // Enrich air quality with Sensor.Community data (hyperlocal citizen sensors)
+      // This supplements or overrides the modeled AQ data from Open-Meteo
+      if (sensorCommunityAQ) {
+        const sensorAQ = sensorCommunityToAirQuality(sensorCommunityAQ);
+        if (result.airQuality) {
+          // Prefer citizen-sensor PM data (more localized), keep gas data from API
+          result.airQuality = {
+            ...result.airQuality,
+            pm25: sensorAQ.pm25,
+            pm10: sensorAQ.pm10,
+            europeanAqi: sensorAQ.europeanAqi,
+            // Keep usAqi from API source if available, otherwise calculate from sensor PM2.5
+            usAqi: result.airQuality.usAqi || sensorAQ.usAqi,
+          };
+        } else {
+          result.airQuality = sensorAQ;
+        }
+      }
+
       setConsensus(result);
       setRadar(radarData);
     } catch (err) {
