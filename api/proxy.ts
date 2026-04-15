@@ -1,4 +1,4 @@
-import type { IncomingMessage, ServerResponse } from 'node:http';
+export const config = { runtime: 'edge' };
 
 const ALLOWED_SOURCES = [
   'weatherapi',
@@ -39,28 +39,22 @@ function buildUpstreamUrl(source: AllowedSource, lat: string, lon: string): stri
   }
 }
 
-export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (req.method !== 'GET') {
-    res.statusCode = 405;
-    res.end(JSON.stringify({ error: 'Method Not Allowed' }));
-    return;
+export default async function handler(request: Request): Promise<Response> {
+  if (request.method !== 'GET') {
+    return new Response(JSON.stringify({ error: 'Method Not Allowed' }), { status: 405 });
   }
 
-  const url = new URL(req.url!, `http://${req.headers.host}`);
+  const url = new URL(request.url);
   const source = url.searchParams.get('source');
   const lat = url.searchParams.get('lat');
   const lon = url.searchParams.get('lon');
 
   if (!source || !(ALLOWED_SOURCES as readonly string[]).includes(source)) {
-    res.statusCode = 400;
-    res.end(JSON.stringify({ error: 'Invalid source' }));
-    return;
+    return new Response(JSON.stringify({ error: 'Invalid source' }), { status: 400 });
   }
 
   if (!lat || !lon) {
-    res.statusCode = 400;
-    res.end(JSON.stringify({ error: 'Missing lat/lon' }));
-    return;
+    return new Response(JSON.stringify({ error: 'Missing lat/lon' }), { status: 400 });
   }
 
   const latNum = parseFloat(lat);
@@ -71,29 +65,26 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     latNum < -90 || latNum > 90 ||
     lonNum < -180 || lonNum > 180
   ) {
-    res.statusCode = 400;
-    res.end(JSON.stringify({ error: 'Invalid coordinates' }));
-    return;
+    return new Response(JSON.stringify({ error: 'Invalid coordinates' }), { status: 400 });
   }
 
   const upstreamUrl = buildUpstreamUrl(source as AllowedSource, lat, lon);
   if (!upstreamUrl) {
-    // Key not configured — frontend treats non-OK as "source unavailable"
-    res.statusCode = 503;
-    res.end(JSON.stringify({ error: 'API key not configured' }));
-    return;
+    return new Response(JSON.stringify({ error: 'API key not configured' }), { status: 503 });
   }
 
   try {
     const upstream = await fetch(upstreamUrl, { signal: AbortSignal.timeout(8000) });
     const body = await upstream.text();
 
-    res.statusCode = upstream.status;
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Cache-Control', 'public, max-age=300'); // 5-min cache at CDN edge
-    res.end(body);
+    return new Response(body, {
+      status: upstream.status,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300',
+      },
+    });
   } catch {
-    res.statusCode = 502;
-    res.end(JSON.stringify({ error: 'Upstream request failed' }));
+    return new Response(JSON.stringify({ error: 'Upstream request failed' }), { status: 502 });
   }
 }
