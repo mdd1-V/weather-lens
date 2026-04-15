@@ -12,27 +12,27 @@ type AllowedSource = (typeof ALLOWED_SOURCES)[number];
 function buildUpstreamUrl(source: AllowedSource, lat: string, lon: string): string | null {
   switch (source) {
     case 'weatherapi': {
-      const key = process.env.WEATHERAPI_KEY;
+      const key = process.env.VITE_WEATHERAPI_KEY;
       if (!key) return null;
       return `https://api.weatherapi.com/v1/forecast.json?key=${key}&q=${lat},${lon}&days=7&aqi=yes`;
     }
     case 'openweathermap': {
-      const key = process.env.OPENWEATHERMAP_KEY;
+      const key = process.env.VITE_OPENWEATHERMAP_KEY;
       if (!key) return null;
       return `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${key}&units=metric`;
     }
     case 'visualcrossing': {
-      const key = process.env.VISUALCROSSING_KEY;
+      const key = process.env.VITE_VISUALCROSSING_KEY;
       if (!key) return null;
       return `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${lat},${lon}?key=${key}&unitGroup=metric&include=current`;
     }
     case 'pirateweather': {
-      const key = process.env.PIRATEWEATHER_KEY;
+      const key = process.env.VITE_PIRATEWEATHER_KEY;
       if (!key) return null;
       return `https://api.pirateweather.net/forecast/${key}/${lat},${lon}?units=si`;
     }
     case 'tomorrowio': {
-      const key = process.env.TOMORROWIO_KEY;
+      const key = process.env.VITE_TOMORROWIO_KEY;
       if (!key) return null;
       return `https://api.tomorrow.io/v4/weather/forecast?location=${lat},${lon}&apikey=${key}&units=metric&timesteps=1m,1h,1d`;
     }
