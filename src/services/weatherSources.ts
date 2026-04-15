@@ -238,16 +238,13 @@ export async function fetchWeatherAPI(
   lat: number,
   lon: number
 ): Promise<WeatherSourceData | null> {
-  const apiKey = import.meta.env.VITE_WEATHERAPI_KEY;
-  if (!apiKey || apiKey === "your_weatherapi_key_here") return null;
-
   const key = cacheKey("weatherapi", lat, lon);
   const cached = getCached<WeatherSourceData>(key);
   if (cached) return cached;
 
   try {
     const res = await fetch(
-      `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${lat},${lon}&days=7&aqi=yes`
+      `/api/proxy?source=weatherapi&lat=${lat}&lon=${lon}`
     );
     if (!res.ok) return null;
     const d = await res.json();
@@ -562,16 +559,13 @@ export async function fetchOpenWeatherMap(
   lat: number,
   lon: number
 ): Promise<WeatherSourceData | null> {
-  const apiKey = import.meta.env.VITE_OPENWEATHERMAP_KEY;
-  if (!apiKey || apiKey === "your_openweathermap_key_here") return null;
-
   const key = cacheKey("openweathermap", lat, lon);
   const cached = getCached<WeatherSourceData>(key);
   if (cached) return cached;
 
   try {
     const res = await fetch(
-      `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
+      `/api/proxy?source=openweathermap&lat=${lat}&lon=${lon}`
     );
     if (!res.ok) return null;
     const d = await res.json();
@@ -615,16 +609,13 @@ export async function fetchVisualCrossing(
   lat: number,
   lon: number
 ): Promise<WeatherSourceData | null> {
-  const apiKey = import.meta.env.VITE_VISUALCROSSING_KEY;
-  if (!apiKey || apiKey === "your_visualcrossing_key_here") return null;
-
   const key = cacheKey("visualcrossing", lat, lon);
   const cached = getCached<WeatherSourceData>(key);
   if (cached) return cached;
 
   try {
     const res = await fetch(
-      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${lat},${lon}?key=${apiKey}&unitGroup=metric&include=current`
+      `/api/proxy?source=visualcrossing&lat=${lat}&lon=${lon}`
     );
     if (!res.ok) return null;
     const d = await res.json();
@@ -668,16 +659,13 @@ export async function fetchPirateWeather(
   lat: number,
   lon: number
 ): Promise<WeatherSourceData | null> {
-  const apiKey = import.meta.env.VITE_PIRATEWEATHER_KEY;
-  if (!apiKey || apiKey === "your_pirateweather_key_here") return null;
-
   const key = cacheKey("pirateweather", lat, lon);
   const cached = getCached<WeatherSourceData>(key);
   if (cached) return cached;
 
   try {
     const res = await fetch(
-      `https://api.pirateweather.net/forecast/${apiKey}/${lat},${lon}?units=si`
+      `/api/proxy?source=pirateweather&lat=${lat}&lon=${lon}`
     );
     if (!res.ok) return null;
     const d = await res.json();
@@ -727,16 +715,13 @@ export async function fetchTomorrowIo(
   lat: number,
   lon: number
 ): Promise<WeatherSourceData | null> {
-  const apiKey = import.meta.env.VITE_TOMORROWIO_KEY;
-  if (!apiKey || apiKey === "your_tomorrowio_key_here") return null;
-
   const key = cacheKey("tomorrowio", lat, lon);
   const cached = getCached<WeatherSourceData>(key);
   if (cached) return cached;
 
   try {
     const res = await fetch(
-      `https://api.tomorrow.io/v4/weather/forecast?location=${lat},${lon}&apikey=${apiKey}&units=metric&timesteps=1m,1h,1d`
+      `/api/proxy?source=tomorrowio&lat=${lat}&lon=${lon}`
     );
     if (!res.ok) return null;
     const d = await res.json();

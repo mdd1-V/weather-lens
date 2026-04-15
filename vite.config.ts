@@ -12,5 +12,9 @@ export default defineConfig({
   },
   server: {
     host: true, // Exposes the app to your local Wi-Fi network
+    proxy: {
+      // Forward /api/* to vercel dev server (port 3000) during local development
+      '/api': 'http://localhost:3000',
+    },
   },
 })
